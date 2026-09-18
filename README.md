@@ -10,7 +10,7 @@ WhaleRead is a local-first macOS reading workspace for translating TXT, Markdown
 
 ## Download the macOS preview
 
-[Download the latest WhaleRead release](https://github.com/catlovemiaomiao/WhaleRead/releases/latest)
+[Download WhaleRead 1.18.1 Preview for macOS](https://github.com/catlovemiaomiao/WhaleRead/releases/tag/v1.18.1-preview.1)
 
 - Apple silicon Mac (M1 or newer)
 - macOS 13 or later
@@ -51,4 +51,3 @@ Based on our testing, Hy-MT2 currently provides the best fit for WhaleRead's lon
 ## Acknowledgements
 
 WhaleRead 1.18 was built with help from **GPT-6 Astra**, **GPT-5.6 Sol**, and **DeepSeek**. Runtime translation remains controlled by the user and the selected model destination.
-
