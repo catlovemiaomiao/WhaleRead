@@ -21,6 +21,10 @@ review a passage with its source evidence, and ask AI about what you are reading
   Libraries, notes and saved tasks are not part of the download. The new
   sandboxed edition can import preview preferences and ask you to authorize
   previous book/task folders through the native file panels.
+- The preview import merges library and reading preferences. **Restore your
+  previous custom model/API profiles and preferred default separately**; private
+  connections and credentials are not included in the download. A missing
+  translation selection defaults to local 7B. See [upgrade steps](docs/UPGRADING.md).
 - This build is ad-hoc signed and is not Apple-notarized. macOS may ask you to
   approve the downloaded application in **System Settings → Privacy & Security**.
   See [Apple's opening instructions](https://support.apple.com/en-us/102445).
