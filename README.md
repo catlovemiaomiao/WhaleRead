@@ -9,13 +9,13 @@ translate, read source and translation side by side, keep bookmarks and notes,
 review a passage with its source evidence, and ask AI about what you are reading.
 
 [Website and historical demo](https://whaleread-astra.kunyu575.chatgpt.site/) ·
-[Download 1.19.0](https://github.com/catlovemiaomiao/WhaleRead/releases/tag/v1.19.0) ·
+[Download 1.19.1](https://github.com/catlovemiaomiao/WhaleRead/releases/tag/v1.19.1) ·
 [Product Hunt](https://www.producthunt.com/products/whaleread)
 
 ## Download and upgrade
 
-- **WhaleRead 1.19.0 / build 67** — Apple Silicon (M1 or newer), **macOS 15 or later**.
-- Download `WhaleRead-1.19.0-macOS-arm64.zip` from the release, verify it against
+- **WhaleRead 1.19.1 / build 68** — Apple Silicon (M1 or newer), **macOS 15 or later**.
+- Download `WhaleRead-1.19.1-macOS-arm64.zip` from the release, verify it against
   `SHA256SUMS.txt`, and follow the included English/Chinese installation notes.
 - Keep a copy of your old app and important reading data before upgrading.
   Libraries, notes and saved tasks are not part of the download. The new
@@ -33,6 +33,11 @@ review a passage with its source evidence, and ask AI about what you are reading
   remains available. Its feature set and requirements differ from 1.19.
 
 ## What's new in 1.19
+
+**1.19.1 maintenance update:** fixes overlapping scan letters and translations
+when a scanned PDF also contains an invisible OCR text layer. The display cache
+refreshes automatically; original PDFs and saved translations are retained,
+with no retranslation required. Untranslated passages and figures stay visible.
 
 - Independent model profiles for **translation, review and Ask AI**. Use a local,
   self-hosted or cloud service with a compatible Chat Completions API.

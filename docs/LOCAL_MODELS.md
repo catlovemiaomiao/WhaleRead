@@ -1,6 +1,6 @@
 # 本机 HY-MT2
 
-1.19.0 候选支持 Ollama 上的 **HY-MT2 1.8B Q8** 和 **7B Q4**。设置 → 模型与 API → 翻译模型中分别显示 `Hy-MT2 1.8B · Ollama`、`Hy-MT2 7B · Ollama`。默认仍为 7B；旧预览版保存的 `local_1_8b` 任务继续绑定原来的 1.8B 模型。
+1.19 正式开源版支持 Ollama 上的 **HY-MT2 1.8B Q8** 和 **7B Q4**。设置 → 模型与 API → 翻译模型中分别显示 `Hy-MT2 1.8B · Ollama`、`Hy-MT2 7B · Ollama`。默认仍为 7B；旧预览版保存的 `local_1_8b` 任务继续绑定原来的 1.8B 模型。
 
 模型在本机 Ollama 中运行，使用 `http://127.0.0.1:11434/v1`，不需要 API Key。应用本身不含模型权重，也不会代你安装或启动 Ollama。请先启动 Ollama，并从 [腾讯官方 GGUF 仓库](https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF) 下载 `Hy-MT2-1.8B-Q8_0.gguf`（约 1.91 GB）。模型内存占用还包括运行时和上下文，不能用文件大小代替内存需求。
 
