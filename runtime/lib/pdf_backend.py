@@ -79,6 +79,7 @@ class Page:
                     rgb = color(obj) or (0, 0, 0)
                     span = dict(text=text, bbox=list(box), size=obj.get_font_size(), font=font,
                                 flags=2 if any(k in font.lower() for k in ('italic', 'oblique')) else 0,
+                                invisible=raw.FPDFTextObj_GetTextRenderMode(obj) == raw.FPDF_TEXTRENDERMODE_INVISIBLE,
                                 color=(rgb[0] << 16) + (rgb[1] << 8) + rgb[2])
                     blocks.append(dict(type=0, bbox=list(box), lines=[dict(spans=[span])]))
             return dict(blocks=blocks)
@@ -93,7 +94,9 @@ class Page:
         return result
 
     def add_redact_annot(self, rect, **kwargs): self.redactions.append(Rect(rect))
-    def draw_rect(self, rect, **kwargs): self.masks.append((Rect(rect), kwargs.get('fill', (1, 1, 1))))
+    def draw_rect(self, rect, **kwargs):
+        self.masks.append((Rect(rect), kwargs.get('fill', (1, 1, 1)),
+                           [Rect(area) for area in kwargs.get('preserve', ())]))
 
     def apply_redactions(self, **kwargs):
         # Disposable presentation only: remove matched text objects, not images
@@ -110,9 +113,16 @@ class Page:
         bitmap = self.page.render(scale=scale)
         image = bitmap.to_pil().convert('RGB')
         bitmap.close()
+        original = image.copy() if any(protected for _, _, protected in self.masks) else None
         draw = ImageDraw.Draw(image)
-        for rect, fill in self.masks:
+        for rect, fill, protected in self.masks:
             draw.rectangle(tuple(v * scale for v in rect), fill=tuple(round(c * 255) for c in fill))
+            for area in protected:
+                if (area & rect).is_empty:
+                    continue
+                box = (max(0, math.floor(area.x0 * scale)), max(0, math.floor(area.y0 * scale)),
+                       min(image.width, math.ceil(area.x1 * scale)), min(image.height, math.ceil(area.y1 * scale)))
+                image.paste(original.crop(box), box)
         if clip is not None:
             box = Rect(clip) & self.rect
             image = image.crop((math.floor(box.x0*scale), math.floor(box.y0*scale), math.ceil(box.x1*scale), math.ceil(box.y1*scale)))

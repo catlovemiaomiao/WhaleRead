@@ -1,4 +1,5 @@
 import hashlib
+import io
 import sys
 import tempfile
 import unittest
@@ -10,6 +11,74 @@ from research_position import render_position, position_path
 
 
 class OriginalPositionTests(unittest.TestCase):
+    def test_scan_with_hidden_text_masks_translation_and_preserves_pending_and_visual(self):
+        import pymupdf as fitz
+        from PIL import Image
+        import pdf_backend
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            with fitz.open() as picture:
+                page = picture.new_page(width=400, height=300)
+                page.insert_text((40, 65), 'Scanned paragraph.', fontsize=11)
+                page.insert_text((40, 90), 'Pending words.', fontsize=11)
+                page.draw_rect(fitz.Rect(35, 105, 120, 170), fill=(0, 0, 1))
+                raster = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False).tobytes('png')
+            with fitz.open() as layered:
+                page = layered.new_page(width=400, height=300)
+                page.insert_image(page.rect, stream=raster)
+                page.insert_text((40, 65), 'Scanned paragraph.', fontsize=11, render_mode=3)
+                page.insert_text((40, 90), 'Pending words.', fontsize=11, render_mode=3)
+                layered.save(root / 'scan.pdf')
+            job = import_pdf(root / 'scan.pdf', root / 'jobs')
+            before = hashlib.sha256((job / 'original.pdf').read_bytes()).hexdigest()
+            with pdf_backend.open(job / 'original.pdf') as doc:
+                original = doc[0].get_pixmap(matrix=pdf_backend.Matrix(2, 2), alpha=False).image.copy()
+            # Deliberately coarse OCR geometry crosses a pending paragraph and
+            # a diagram. Neither may be erased while replacing the translated text.
+            data = dict(approved=True, blocks=[
+                dict(label='text', visual=False, origin='native', bbox=[.085, .145, .35, .30],
+                     source='Scanned paragraph.', translation='扫描正文', font_size=11),
+                dict(label='text', visual=False, origin='native', bbox=[.08, .245, .40, .095],
+                     source='Pending words.', translation='', font_size=11),
+                dict(label='image', visual=True, origin='ocr', bbox=[.075, .335, .25, .25],
+                     source='diagram', translation='')])
+            saved_data = repr(data)
+            result = load(render_position(job, 1, data))
+            image = Image.open(position_path(job, 1, data).with_suffix('.png')).convert('RGB')
+            crop = (70, 90, 360, 140)
+            self.assertNotEqual(set(original.crop(crop).tobytes()), {255})
+            self.assertEqual(set(image.crop(crop).tobytes()), {255})
+            for crop in ((65, 151, 340, 195), (70, 210, 240, 340)):
+                self.assertEqual(image.crop(crop).tobytes(), original.crop(crop).tobytes())
+            self.assertTrue(result['blocks'][0]['translated'])
+            self.assertFalse(result['blocks'][1]['translated'])
+            self.assertEqual(repr(data), saved_data)
+            self.assertEqual(hashlib.sha256((job / 'original.pdf').read_bytes()).hexdigest(), before)
+
+    def test_visible_native_text_on_image_keeps_image_background(self):
+        import pymupdf as fitz
+        from PIL import Image
+        import pdf_backend
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            stream = io.BytesIO()
+            Image.new('RGB', (400, 300), (205, 223, 241)).save(stream, format='PNG')
+            with fitz.open() as doc:
+                page = doc.new_page(width=400, height=300)
+                page.insert_image(page.rect, stream=stream.getvalue())
+                page.insert_text((40, 65), 'Native foreground.', fontsize=11)
+                doc.save(root / 'visible.pdf')
+            job = import_pdf(root / 'visible.pdf', root / 'jobs')
+            with pdf_backend.open(job / 'original.pdf') as doc:
+                original = doc[0].get_pixmap(matrix=pdf_backend.Matrix(2, 2), alpha=False).image.copy()
+            data = dict(approved=True, blocks=[dict(label='text', visual=False, origin='native',
+                bbox=[.085, .145, .35, .09], source='Native foreground.', translation='可见文字')])
+            render_position(job, 1, data)
+            image = Image.open(position_path(job, 1, data).with_suffix('.png')).convert('RGB')
+            background = original.getpixel((20, 20))
+            crop = image.crop((70, 90, 350, 145))
+            self.assertEqual(crop.tobytes(), bytes(background) * crop.width * crop.height)
+
     def test_partial_translation_preserves_frames_untranslated_text_and_source(self):
         import pymupdf as fitz
         with tempfile.TemporaryDirectory() as raw:

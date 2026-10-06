@@ -9,7 +9,7 @@ from research import HEADINGS, page_dir, reading_text, save
 
 
 def position_key(data):
-    return hashlib.sha256(json.dumps(['position-v2-pdfium', data], sort_keys=True,
+    return hashlib.sha256(json.dumps(['position-v3-pdfium-scan-regions', data], sort_keys=True,
                                     ensure_ascii=False).encode()).hexdigest()[:20]
 
 
@@ -26,6 +26,14 @@ def render_position(job, number, data):
     with fitz.open(Path(job) / 'original.pdf') as doc:
         page = doc[number - 1]
         width, height = page.rect.width, page.rect.height
+        native_blocks = page.get_text('dict')['blocks']
+        images = [fitz.Rect(block['bbox']) for block in native_blocks if block['type'] == 1]
+        can_display_translation = data.get('approved') or data.get('translation_mode') == 'batch'
+        protected = []
+        for block in data['blocks']:
+            if block.get('visual') or not (can_display_translation and block.get('translation')):
+                x, y, w, h = block['bbox']
+                protected.append(fitz.Rect(x * width, y * height, (x+w) * width, (y+h) * height) & page.rect)
         frames = [d['rect'] for d in page.get_drawings()
                   if d.get('color') is not None and d['rect'].width > 60 and d['rect'].height > 25
                   and any(item[0] == 're' for item in d['items'])]
@@ -40,7 +48,7 @@ def render_position(job, number, data):
             entries.append(dict(index=index, block=block, rect=rect, spans=[]))
         # Assign each native span once: OCR regions can overlap at heading/body
         # boundaries. The tighter region owns a fully contained heading span.
-        for native in page.get_text('dict')['blocks']:
+        for native in native_blocks:
             for line in native.get('lines', []):
                 for span in line['spans']:
                     if not span.get('text', '').strip():
@@ -53,9 +61,13 @@ def render_position(job, number, data):
         rendered = []
         for entry in entries:
             block, rect, spans = entry['block'], entry['rect'], entry['spans']
-            translated = bool((data.get('approved') or data.get('translation_mode') == 'batch')
-                              and block.get('translation'))
-            if spans:
+            translated = bool(can_display_translation and block.get('translation'))
+            # A scanned page can also contain an invisible OCR text layer.
+            # Removing those text objects does not remove the letters in the image.
+            scan_text = any(span.get('invisible') and any(
+                (fitz.Rect(span['bbox']) & image).get_area() / max(1, fitz.Rect(span['bbox']).get_area()) > .55
+                for image in images) for span in spans)
+            if spans and not scan_text:
                 rect = fitz.Rect(spans[0]['bbox'])
                 for span in spans[1:]:
                     rect |= fitz.Rect(span['bbox'])
@@ -64,7 +76,7 @@ def render_position(job, number, data):
                 representative = max(spans, key=lambda s: len(s.get('text', '')))
                 color = '#%06x' % representative.get('color', 0)
             if translated:
-                if spans and block.get('origin') == 'native':
+                if spans and block.get('origin') == 'native' and not scan_text:
                     # Remove text only, retaining PDF vector frames, connectors,
                     # colours, logos and all images on a temporary in-memory page.
                     for span in spans:
@@ -72,7 +84,18 @@ def render_position(job, number, data):
                 else:
                     # Scans have no removable text layer. Mask only the detected
                     # text crop; visual blocks remain untouched.
-                    page.draw_rect(rect, color=None, fill=(1, 1, 1), overlay=True)
+                    mask = entry['rect'] if scan_text else rect
+                    mask = fitz.Rect(mask.x0 - 1, mask.y0 - 1, mask.x1 + 1, mask.y1 + 1) & page.rect
+                    page.draw_rect(mask, color=None, fill=(1, 1, 1), overlay=True, preserve=protected)
+                    if scan_text:
+                        # Hidden text geometry can be much shorter than the
+                        # scanned letters. Use OCR regions, then stop before a
+                        # protected paragraph/figure below instead of painting
+                        # translated text over that untouched source.
+                        for area in protected:
+                            overlap = rect & area
+                            if not overlap.is_empty and overlap.width > rect.width * .5 and rect.y0 < area.y0:
+                                rect.y1 = min(rect.y1, area.y0)
             containers = [r for r in frames if r.contains(rect)]
             if containers:
                 container = min(containers, key=lambda r: r.get_area())

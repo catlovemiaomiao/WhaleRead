@@ -145,7 +145,7 @@ app = BUNDLE(coll, name='鲸读.app', icon=str(root/'assets/HyTranslator.icns'),
     bundle_identifier=os.environ.get('WHALEREAD_BUNDLE_ID', 'local.sindy.jingdu'),
     info_plist={'CFBundleName':'鲸读','CFBundleDisplayName':'鲸读',
                 'CFBundleExecutable':'鲸读', 'LSBackgroundOnly':False,
-                'CFBundleShortVersionString':'1.19.0','CFBundleVersion':'67',
+                'CFBundleShortVersionString':'1.19.1','CFBundleVersion':'68',
                 'LSApplicationCategoryType':'public.app-category.reference',
                 # Declared only because the bundle really carries
                 # whaleread_en.qm plus the Qt catalogues above.

@@ -25,8 +25,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-EXPECTED_VERSION = "1.19.0"
-EXPECTED_BUILD = "67"
+EXPECTED_VERSION = "1.19.1"
+EXPECTED_BUILD = "68"
 MINIMUM_MACOS = "15.0"
 DECLARED_LOCALIZATIONS = ("zh_CN", "en")
 DEVELOPMENT_REGION = "en"

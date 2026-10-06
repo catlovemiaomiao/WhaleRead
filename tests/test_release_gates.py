@@ -172,7 +172,7 @@ class SourceGateTests(unittest.TestCase):
 class BundleGateTests(unittest.TestCase):
     """Bundle resource, inventory and version checks on a synthetic bundle."""
 
-    def bundle(self, *, version="1.19.0", build="67", localizations=("zh_CN", "en"),
+    def bundle(self, *, version="1.19.1", build="68", localizations=("zh_CN", "en"),
                development_region="en"):
         raw = tempfile.mkdtemp(prefix="release-bundle-")
         self.addCleanup(shutil.rmtree, raw, True)
@@ -476,8 +476,8 @@ class PackagingSpecTests(unittest.TestCase):
 
     def test_spec_declares_the_candidate_version(self):
         text = self.spec()
-        self.assertIn("'CFBundleShortVersionString':'1.19.0'", text)
-        self.assertIn("'CFBundleVersion':'67'", text)
+        self.assertIn("'CFBundleShortVersionString':'1.19.1'", text)
+        self.assertIn("'CFBundleVersion':'68'", text)
 
     def test_spec_declares_localizations_only_with_resources(self):
         text = self.spec()
