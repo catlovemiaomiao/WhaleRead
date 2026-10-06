@@ -1,0 +1,28 @@
+# Files that own translatable interface strings for the Qt translation
+# catalogue i18n/whaleread_en.ts. One repo-relative path per line.
+#
+# Every user-visible QML surface of the supported macOS app is listed here, plus
+# the Python locale service that owns the few strings rendered at the Python
+# boundary. Nothing outside this list is scanned, so extraction stays
+# deterministic and small. Book content, translations, user notes, paths,
+# protocol values and stable object names are never translated.
+ui/Main.qml
+ui/ProviderSettings.qml
+ui/ReaderPane.qml
+ui/ReadingModeBar.qml
+ui/ReadingAppearancePopup.qml
+ui/ReadingMarginNote.qml
+ui/PositionedPaper.qml
+ui/EpubPane.qml
+ui/EpubWorkspace.qml
+ui/NativeBookView.qml
+ui/AskDialog.qml
+ui/ReviewPane.qml
+ui/ResearchPane.qml
+runtime/lib/locale_service.py
+runtime/lib/annotations.py
+runtime/lib/ui_messages.py
+runtime/lib/answer_language.py
+runtime/lib/post_edit_capability.py
+runtime/lib/provider_profiles.py
+runtime/lib/data_settings.py

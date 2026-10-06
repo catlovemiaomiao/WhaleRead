@@ -1,0 +1,20 @@
+--- a/cmake/QtFinishPrlFile.cmake
++++ b/cmake/QtFinishPrlFile.cmake
+@@ -30,7 +30,7 @@
+ cmake_policy(SET CMP0057 NEW)
+ include("${CMAKE_CURRENT_LIST_DIR}/QtGenerateLibHelpers.cmake")
+ 
+-file(STRINGS "${IN_FILE}" lines)
++file(STRINGS "${IN_FILE}" lines ENCODING UTF-8)
+ set(content "")
+ set(qt_framework_search_path_inserted FALSE)
+ foreach(line ${lines})
+@@ -142,7 +142,7 @@
+ 
+ # Read the prl meta file to find out where should the final prl file be placed,
+ # Copy it there, if the contents hasn't changed.
+-file(STRINGS "${IN_META_FILE}" lines)
++file(STRINGS "${IN_META_FILE}" lines ENCODING UTF-8)
+ 
+ foreach(line ${lines})
+     if(line MATCHES "^FINAL_PRL_FILE_PATH = (.*)")

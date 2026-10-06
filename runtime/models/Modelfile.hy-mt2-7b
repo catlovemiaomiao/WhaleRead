@@ -1,0 +1,9 @@
+FROM ./Hy-MT2-7B-Q4_K_M.gguf
+
+# Tencent's recommended sampling parameters for Hy-MT2 1.8B / 7B.
+PARAMETER temperature 0.7
+PARAMETER top_p 0.6
+PARAMETER top_k 20
+PARAMETER repeat_penalty 1.05
+PARAMETER num_ctx 16384
+PARAMETER num_predict 4096

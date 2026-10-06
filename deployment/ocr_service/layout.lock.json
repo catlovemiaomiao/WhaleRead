@@ -1,0 +1,9 @@
+{
+  "url": "https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/PP-DocLayoutV3_onnx_infer.tar",
+  "sha256": "b284a47e7a35dc2008f6aa38047364dc9174421b76ccf13f7b7fa00f57c5e416",
+  "bytes": 130519040,
+  "files": {
+    "inference.onnx": "45bf71750b00739a41fc209f132eb104a4d6b5bb29483c9078164d8b87cf28ba",
+    "inference.yml": "506fcfac13b3b546ae40d7886b44126420f392adb694e3f8bb6a6286a1f90fdc"
+  }
+}

@@ -1,53 +1,106 @@
-<p align="center">
-  <img src="assets/whaleread-icon.png" width="128" alt="WhaleRead icon">
-</p>
+<p align="center"><img src="docs/brand/whaleread-icon.png" width="128" alt="WhaleRead icon"></p>
 
-# WhaleRead
+# WhaleRead / 鲸读
 
-WhaleRead is a local-first macOS reading workspace for translating TXT, Markdown, and EPUB files, reading the source and translation side by side, reviewing awkward passages, and asking AI about the text without uploading an entire personal library.
+**Free, GPL-3.0 open source. No subscription, paid unlock or required donation.**
 
-**Website and product demo:** [whaleread-astra.kunyu575.chatgpt.site](https://whaleread-astra.kunyu575.chatgpt.site/)
+WhaleRead is a macOS reading workspace for local TXT, Markdown and EPUB books:
+translate, read source and translation side by side, keep bookmarks and notes,
+review a passage with its source evidence, and ask AI about what you are reading.
 
-## Download the macOS preview
+[Website and historical demo](https://whaleread-astra.kunyu575.chatgpt.site/) ·
+[Download 1.19.0](https://github.com/catlovemiaomiao/WhaleRead/releases/tag/v1.19.0) ·
+[Product Hunt](https://www.producthunt.com/products/whaleread)
 
-[Download WhaleRead 1.18.1 Preview for macOS](https://github.com/catlovemiaomiao/WhaleRead/releases/tag/v1.18.1-preview.1)
+## Download and upgrade
 
-- Apple silicon Mac (M1 or newer)
-- macOS 13 or later
-- English is the default on a clean installation; 简体中文 is available in Settings
-- The app is about 185 MB after extraction
-- The optional on-device 7B model is downloaded separately and needs about 4.62 GB
+- **WhaleRead 1.19.0 / build 67** — Apple Silicon (M1 or newer), **macOS 15 or later**.
+- Download `WhaleRead-1.19.0-macOS-arm64.zip` from the release, verify it against
+  `SHA256SUMS.txt`, and follow the included English/Chinese installation notes.
+- Keep a copy of your old app and important reading data before upgrading.
+  Libraries, notes and saved tasks are not part of the download. The new
+  sandboxed edition can import preview preferences and ask you to authorize
+  previous book/task folders through the native file panels.
+- This build is ad-hoc signed and is not Apple-notarized. macOS may ask you to
+  approve the downloaded application in **System Settings → Privacy & Security**.
+  See [Apple's opening instructions](https://support.apple.com/en-us/102445).
+- English is the default for a clean installation; 简体中文 is available in Settings.
+- For an older Mac, the previous [1.18.1 preview](https://github.com/catlovemiaomiao/WhaleRead/releases/tag/v1.18.1-preview.1)
+  remains available. Its feature set and requirements differ from 1.19.
 
-This preview is ad-hoc signed and has not yet been notarised by Apple. On first launch, Control-click or right-click `鲸读.app`, choose **Open**, and confirm. If macOS still blocks it, use **System Settings → Privacy & Security → Open Anyway**.
+## What's new in 1.19
 
-## Add the optional on-device model
+- Independent model profiles for **translation, review and Ask AI**. Use a local,
+  self-hosted or cloud service with a compatible Chat Completions API.
+- Built-in **HY-MT2 1.8B Q8 and 7B Q4/Ollama** presets. Weights are downloaded
+  separately; the application includes no model.
+- API credentials in **macOS Keychain**, separate sending permission for each
+  feature, bounded responses and retries, and saved tasks bound to their routes.
+- Sandboxed file access, recoverable preview preference import, translation-copy
+  export and saved reading positions, annotations and bookmarks.
+- Experimental **research PDF batch translation** using a separately configured
+  OCR service. Skip repeated page approval, pause and resume, and keep completed
+  paragraphs. Drafts remain marked for human review.
 
-1. Install [Ollama](https://ollama.com/download).
-2. Open `Install WhaleRead 7B Model.command` from the downloaded package.
-3. In WhaleRead, open **Settings → On-device Hy-MT2 7B → Refresh**.
+The optional OCR service can run PP-OCRv6 small and PP-DocLayoutV3 on your DGX or
+another Linux machine. The Mac calls it through a private connection; OCR weights,
+server accounts and SSH credentials are not bundled. See [service setup](deployment/ocr_service/README.md).
+Research drafts currently translate into Simplified Chinese and export HTML
+comparison. Formulas/tables retain image crops; this is not reconstructed PDF
+export or a guarantee of scientific translation accuracy.
 
-The installer downloads Tencent's official [Hy-MT2 7B Q4_K_M model](https://huggingface.co/tencent/Hy-MT2-7B-GGUF). The model is not bundled with the application.
+## Choose your models
 
-## Model support
+Install [Ollama](https://ollama.com/download) for the local presets. Follow
+[local model instructions](docs/LOCAL_MODELS.md) to download the official Tencent
+GGUF weights and register the exact WhaleRead model tags. Settings can test a
+short passage before you translate a book.
 
-Based on our testing, Hy-MT2 currently provides the best fit for WhaleRead's long-form translation workflow and is the only model family fully adapted and validated in this preview. Other models have not yet been optimised for WhaleRead. We plan to expand model support based on user feedback.
+For cloud or self-hosted use, add the provider's endpoint and exact Model ID in
+Settings, save your own API Key if required, choose a profile for each feature,
+and review its destination/material before granting permission. Reading does not
+require an AI account. API providers may charge for usage separately.
 
-根据目前的测试结果，Hy-MT2 最适合鲸读的长文本翻译流程，也是本预览版唯一完成完整适配与验证的模型系列。其他模型暂未针对鲸读进行适配，后续将根据用户反馈逐步开放更多模型支持。
+DeepSeek and Qwen compatible routes were tested with small fictional samples.
+That is compatibility evidence, not a ranking of every model or provider.
+Quality, language coverage and format adherence vary; human review stays part
+of the workflow. Automated post-translation review currently supports Simplified
+and Traditional Chinese translations.
 
-## Privacy boundary
+## Privacy
 
-- The download contains no API key, private endpoint, book, cache, reading history, or personal setting.
-- Translation with the optional 7B model runs on the Mac through Ollama.
-- Ask AI is optional. It uses only the OpenAI-compatible endpoint and credential that the user configures locally.
-- WhaleRead shows the source passage and surrounding context before an Ask AI request is sent.
-- Review suggestions remain separate from the reading edition until the user applies them.
+The public download contains no API key, private server address, book, reading
+history, personal preference or OCR/model weight. Your library, notes and tasks
+stay on the Mac. Local HY presets send requests to local Ollama; custom routes
+including loopback tunnels need separate consent for translation, review,
+Ask AI and OCR. The app displays the material sent by each feature.
 
-## Preview notes
+Read [the full privacy explanation](docs/PRIVACY.md). Please exclude books,
+credentials and personal paths from public Issues.
 
-- Keep the original book files and important notes.
-- Model output may contain errors; WhaleRead keeps review evidence and asks for human confirmation before applying changes.
-- Automated post-translation review currently supports Simplified and Traditional Chinese editions. Translation, reading, and manual passage editing remain available for other target languages.
+## Source and build
+
+Application code is licensed under **GPL-3.0-only**. Dependencies and their
+notices retain their original license terms. [Build instructions](docs/OPEN_SOURCE_BUILD.md)
+and the [corresponding component source](docs/COMPONENT_SOURCE.md) describe the
+standalone build, Qt/PySide sources, and local component replacement/re-signing.
+The GitHub edition starts without App Store purchase verification.
+
+## Voluntary support
+
+WhaleRead is free. If it helps you, you can optionally support continued work
+through Alipay. Donations do not unlock features or buy API usage.
+
+<img src="docs/support/alipay.jpg" width="320" alt="Voluntary Alipay donation QR code supplied by the WhaleRead author">
+
+The payment image is supplied only as the author's voluntary-support destination;
+Alipay branding and other third-party marks remain with their respective owners.
+The application does not read or store payment account or transaction information.
 
 ## Acknowledgements
 
-WhaleRead 1.18 was built with help from **GPT-6 Astra**, **GPT-5.6 Sol**, and **DeepSeek**. Runtime translation remains controlled by the user and the selected model destination.
+The original multilingual product and release were built with help from
+**GPT-6 Astra**, **GPT-5.6 Sol** and **DeepSeek**. The architecture audit, language
+boundaries and evidence-based review were part of the original Astra Challenge
+work. New release claims remain separate from the historical 1.18 demo.
+Runtime models and service destinations remain under the reader's control.

@@ -1,0 +1,22 @@
+[Unit]
+Description=WhaleRead private PP-OCRv6 and document layout
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.local/share/whaleread-ocr-v6
+EnvironmentFile=%h/.local/share/whaleread-ocr-v6/secrets.env
+Environment=OMP_NUM_THREADS=4
+Environment=OPENBLAS_NUM_THREADS=1
+ExecStart=%h/.local/share/whaleread-ocr-v6/venv/bin/python server.py --models models
+Restart=on-failure
+RestartSec=10
+MemoryMax=6G
+CPUQuota=400%
+TasksMax=64
+NoNewPrivileges=true
+PrivateTmp=true
+UMask=0077
+
+[Install]
+WantedBy=default.target

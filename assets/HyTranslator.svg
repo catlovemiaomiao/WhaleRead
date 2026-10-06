@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs><linearGradient id="sea" x2=".8" y2="1"><stop stop-color="#497E78"/><stop offset="1" stop-color="#123E40"/></linearGradient></defs>
+<rect x="56" y="56" width="912" height="912" rx="210" fill="url(#sea)"/>
+<path d="M125 680 Q323 510 511 629 Q706 475 912 279" fill="none" stroke="#AAC0B2" stroke-width="5" opacity=".45"/>
+<!-- Two paper wings form the flukes; the centre fold becomes a diving whale. -->
+<path d="M507 452 C391 330 249 406 174 273 C169 461 246 629 432 641 L508 722 L585 641 C775 629 852 461 849 273 C770 406 630 330 507 452Z" fill="#F7F1DE"/>
+<path d="M507 463 Q482 565 508 722 Q542 566 507 463Z" fill="#D6DDCE"/>
+<path d="M432 641 Q356 682 313 761 Q278 825 190 818 Q239 765 247 706 Q306 711 349 682" fill="#F7F1DE"/>
+<path d="M605 533 Q640 509 676 515" fill="none" stroke="#49716B" stroke-width="7" stroke-linecap="round"/>
+<path d="M104 895 Q251 817 325 732" fill="none" stroke="#F7F1DE" stroke-width="12" stroke-linecap="round" opacity=".8"/>
+</svg>
